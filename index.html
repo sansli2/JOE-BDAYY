@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARSULUM — Joe's Island</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=IM+Fell+English&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    background:
+        radial-gradient(circle at top, rgba(255,240,205,.18), transparent 40%),
+        #17120e;
+    color: #f5e8ce;
+    font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+button {
+    font-family: inherit;
+}
+
+.screen {
+    display: none;
+    min-height: 100vh;
+    padding: 35px 18px;
+    animation: fadeIn .7s ease;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    width: min(1050px, 100%);
+    margin: auto;
+}
+
+h1, h2, h3 {
+    font-family: "IM Fell English", Georgia, serif;
+    letter-spacing: 1px;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    opacity: .85;
+}
+
+.gold {
+    color: #d9b978;
+}
+
+/* BUTTONS */
+
+.main-btn {
+    margin-top: 25px;
+    padding: 14px 28px;
+    border: 1px solid #c9a96a;
+    background: #39291d;
+    color: #f7e8c5;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.main-btn:hover {
+    background: #63472d;
+    transform: translateY(-2px);
+}
+
+/* ARRIVAL */
+
+#arrival {
+    justify-content: center;
+    text-align: center;
+    background:
+        linear-gradient(rgba(20,12,7,.25), rgba(20,12,7,.8)),
+        url("arsulum-arrival.jpg") center/cover;
+}
+
+.arrival-box {
+    max-width: 760px;
+    padding: 35px;
+    background: rgba(24,15,9,.75);
+    border: 1px solid rgba(221,187,119,.65);
+    backdrop-filter: blur(4px);
+}
+
+.arrival-box h1 {
+    font-size: clamp(3rem, 10vw, 6rem);
+    margin: 5px 0;
+}
+
+.arrival-box h2 {
+    font-size: 1.6rem;
+    font-weight: normal;
+}
+
+.arrival-info {
+    margin-top: 25px;
+    line-height: 1.8;
+    font-size: 1.15rem;
+}
+
+.island-yours {
+    font-size: 1.7rem;
+    font-style: italic;
+    margin-top: 20px;
+}
+
+/* GENERAL */
+
+.title {
+    text-align: center;
+    font-size: clamp(2.4rem, 7vw, 4.5rem);
+    margin: 10px 0;
+}
+
+.intro {
+    max-width: 700px;
+    text-align: center;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin: 10px auto 30px;
+}
+
+/* MAP */
+
+.map-frame {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 20px auto;
+    border: 8px solid #65462b;
+    box-shadow: 0 10px 35px rgba(0,0,0,.5);
+}
+
+.map-frame img {
+    display: block;
+    width: 100%;
+}
+
+.map-note {
+    text-align: center;
+    margin: 20px auto;
+    font-size: 1.15rem;
+    font-style: italic;
+}
+
+.location-grid {
+    width: 100%;
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.location-btn {
+    padding: 15px;
+    background: #2d2118;
+    color: #f5e5c5;
+    border: 1px solid #8f6d3e;
+    cursor: pointer;
+    font-size: 1.05rem;
+    transition: .2s;
+}
+
+.location-btn:hover:not(:disabled) {
+    background: #4c3523;
+}
+
+.location-btn.completed {
+    background: #51432b;
+    color: #e4ca91;
+}
+
+.location-btn:disabled {
+    cursor: default;
+    opacity: .75;
+}
+
+.progress {
+    text-align: center;
+    margin: 18px;
+    font-size: 1.2rem;
+}
+
+/* DEED */
+
+.document {
+    max-width: 750px;
+    margin: 25px auto;
+    padding: 45px 35px;
+    color: #33261a;
+    background:
+        linear-gradient(rgba(255,247,220,.92), rgba(222,195,143,.94));
+    border: 7px double #76552d;
+    box-shadow: 0 15px 45px rgba(0,0,0,.45);
+    text-align: center;
+}
+
+.document h2 {
+    font-size: 2.5rem;
+    margin: 5px;
+}
+
+.document .joe {
+    font-size: 2.8rem;
+    font-weight: bold;
+    margin: 20px;
+}
+
+.document p {
+    font-size: 1.2rem;
+    line-height: 1.7;
+}
+
+/* WISH */
+
+.wish-page {
+    text-align: center;
+}
+
+.wish-image {
+    width: min(850px, 100%);
+    max-height: 62vh;
+    object-fit: cover;
+    border: 5px solid #684a2d;
+    box-shadow: 0 15px 35px rgba(0,0,0,.45);
+}
+
+.wish-card {
+    max-width: 760px;
+    margin: 25px auto;
+    padding: 28px;
+    background: rgba(48,34,23,.9);
+    border: 1px solid #987445;
+}
+
+.wish-card h2 {
+    color: #d9b978;
+    font-size: 2.2rem;
+    margin-top: 0;
+}
+
+.wish-card p {
+    font-size: 1.35rem;
+    line-height: 1.7;
+}
+
+/* CINEMA */
+
+#cinema {
+    justify-content: center;
+    text-align: center;
+}
+
+.cinema-image {
+    width: min(900px, 100%);
+    border: 6px solid #65462b;
+    box-shadow: 0 15px 50px rgba(0,0,0,.6);
+}
+
+.cinema-message {
+    max-width: 700px;
+}
+
+.cinema-message h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    margin: 10px;
+}
+
+.cinema-message p {
+    font-size: 1.25rem;
+}
+
+/* VIDEO */
+
+#videoScreen {
+    justify-content: center;
+    text-align: center;
+    background: #090705;
+}
+
+.video-wrap {
+    width: min(1000px, 100%);
+}
+
+.video-wrap video {
+    width: 100%;
+    max-height: 75vh;
+    background: black;
+    display: block;
+}
+
+/* FINAL */
+
+#final {
+    justify-content: center;
+    text-align: center;
+    background:
+        radial-gradient(circle at center, rgba(150,108,53,.25), transparent 45%),
+        #120d09;
+}
+
+.final-small {
+    font-size: 1.5rem;
+    opacity: .8;
+}
+
+.final-line {
+    max-width: 750px;
+    font-size: 1.5rem;
+    line-height: 1.7;
+}
+
+.happy {
+    font-family: "IM Fell English", Georgia, serif;
+    font-size: clamp(3rem, 11vw, 7rem);
+    color: #e0bd75;
+    margin: 20px 0 5px;
+    text-shadow: 0 4px 20px rgba(220,175,80,.2);
+}
+
+.welcome22 {
+    font-family: "IM Fell English", Georgia, serif;
+    font-size: clamp(2rem, 6vw, 4rem);
+    margin: 0;
+}
+
+.date {
+    margin-top: 30px;
+    letter-spacing: 5px;
+    color: #c8a66b;
+}
+
+.final-note {
+    margin-top: 35px;
+    font-style: italic;
+    opacity: .75;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+
+    .screen {
+        padding: 22px 12px;
+    }
+
+    .arrival-box {
+        padding: 25px 18px;
+    }
+
+    .location-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .document {
+        padding: 30px 18px;
+    }
+
+    .wish-card {
+        padding: 20px 16px;
+    }
+
+    .wish-card p {
+        font-size: 1.2rem;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     1. ARRIVAL
+========================= -->
+
+<section id="arrival" class="screen active">
+
+    <div class="arrival-box">
+
+        <p class="subtitle">A private island awaits...</p>
+
+        <h1>ARSULUM</h1>
+
+        <h2>JOE HAS ARRIVED</h2>
+
+        <div class="arrival-info">
+            <div>Population: <strong>1</strong></div>
+            <div>Owner: <strong>Joe</strong></div>
+            <div>Established: <strong>October 5, 2026</strong></div>
+            <div>Age of Owner: <strong>22</strong></div>
+        </div>
+
+        <div class="island-yours">
+            This island is yours.
+        </div>
+
+        <button class="main-btn" onclick="showScreen('map')">
+            ENTER ARSULUM →
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     2. MAP
+========================= -->
+
+<section id="map" class="screen">
+
+    <div class="container">
+
+        <h1 class="title">ARSULUM</h1>
+
+        <p class="intro">
+            Nothing on this island is random.
+            Every little place was waiting for you.
+        </p>
+
+        <div class="map-frame">
+            <img src="arsulum-map.jpg" alt="Map of Arsulum">
+        </div>
+
+        <p class="map-note">
+            10 places. 10 wishes. 1 island.
+        </p>
+
+        <button class="main-btn" onclick="showScreen('deed')">
+            FIRST, CHECK THE DEED →
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     3. DEED
+========================= -->
+
+<section id="deed" class="screen">
+
+    <div class="container">
+
+        <p class="subtitle" style="text-align:center;">
+            IMPORTANT ISLAND DOCUMENT FOUND
+        </p>
+
+        <h1 class="title">THE DEED</h1>
+
+        <div class="document">
+
+            <h2>OFFICIAL DEED</h2>
+            <h2>OF ARSULUM</h2>
+
+            <p>
+                This island, including its beaches, gardens,
+                roads, markets and unexplored territories,
+                hereby belongs to:
+            </p>
+
+            <div class="joe">JOE</div>
+
+            <p>
+                Effective immediately.
+            </p>
+
+            <p>
+                <strong>No refunds. No exchanges.</strong>
+            </p>
+
+            <p style="margin-top:30px;">
+                Owner since October 5, 2026
+            </p>
+
+        </div>
+
+        <div style="text-align:center;">
+            <button class="main-btn" onclick="showScreen('locations')">
+                ACCEPT MY ISLAND 🏝️
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     4. LOCATIONS
+========================= -->
+
+<section id="locations" class="screen">
+
+    <div class="container">
+
+        <h1 class="title">EXPLORE YOUR ISLAND</h1>
+
+        <p class="intro">
+            Ten places were prepared for you.
+            Each one has something to leave behind.
+        </p>
+
+        <div class="progress">
+            <span id="count">0</span> / 10 WISHES COLLECTED
+        </div>
+
+        <div class="location-grid">
+
+            <button class="location-btn" id="btn0"
+                onclick="openWish(0)">
+                🌸 01 — Lily Garden
+            </button>
+
+            <button class="location-btn" id="btn1"
+                onclick="openWish(1)">
+                🍜 02 — Food Market
+            </button>
+
+            <button class="location-btn" id="btn2"
+                onclick="openWish(2)">
+                ✈️ 03 — Travel Bureau
+            </button>
+
+            <button class="location-btn" id="btn3"
+                onclick="openWish(3)">
+                🎵 04 — Record Shop
+            </button>
+
+            <button class="location-btn" id="btn4"
+                onclick="openWish(4)">
+                📮 05 — Post Office
+            </button>
+
+            <button class="location-btn" id="btn5"
+                onclick="openWish(5)">
+                🗺️ 06 — Map Room
+            </button>
+
+            <button class="location-btn" id="btn6"
+                onclick="openWish(6)">
+                🏖️ 07 — Secret Beach
+            </button>
+
+            <button class="location-btn" id="btn7"
+                onclick="openWish(7)">
+                💡 08 — Lighthouse
+            </button>
+
+            <button class="location-btn" id="btn8"
+                onclick="openWish(8)">
+                🎁 09 — Treasure Shop
+            </button>
+
+            <button class="location-btn" id="btn9"
+                onclick="openWish(9)">
+                ❤️ 10 — Heart of Arsulum
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     5. WISH
+========================= -->
+
+<section id="wish" class="screen">
+
+    <div class="container wish-page">
+
+        <img id="wishImage"
+             class="wish-image"
+             src=""
+             alt="Arsulum location">
+
+        <div class="wish-card">
+
+            <h2 id="wishTitle"></h2>
+
+            <p id="wishText"></p>
+
+        </div>
+
+        <button class="main-btn" onclick="returnToLocations()">
+            ← RETURN TO THE ISLAND
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     6. CINEMA UNLOCK
+========================= -->
+
+<section id="cinema" class="screen">
+
+    <div class="container cinema-message">
+
+        <p class="subtitle">
+            10 / 10 WISHES COLLECTED
+        </p>
+
+        <h1>NEW LOCATION UNLOCKED</h1>
+
+        <img
+            src="arsulum-cinema.jpg"
+            class="cinema-image"
+            alt="Arsulum Cinema"
+        >
+
+        <h1 class="gold">ARSULUM CINEMA</h1>
+
+        <p>
+            Tonight's only screening.
+        </p>
+
+        <p>
+            <strong>JOE — 22</strong>
+        </p>
+
+        <p>
+            A very limited production.
+        </p>
+
+        <p>
+            One audience member.
+        </p>
+
+        <button class="main-btn" onclick="showScreen('videoScreen'); startVideo()">
+            PLAY THE SCREENING 🎬
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     7. VIDEO
+========================= -->
+
+<section id="videoScreen" class="screen">
+
+    <div class="video-wrap">
+
+        <video id="birthdayVideo" controls playsinline>
+            <source src="birthday-video.mp4" type="video/mp4">
+            Your browser does not support this video.
+        </video>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     8. FINAL
+========================= -->
+
+<section id="final" class="screen">
+
+    <div class="container">
+
+        <p class="final-small">
+            THE END.
+        </p>
+
+        <p class="final-line">
+            ...or maybe not.
+        </p>
+
+        <p class="final-line">
+            You came to Arsulum looking for an island.
+            <br>
+            Turns out,
+            <br>
+            <strong>the island was made for you.</strong>
+        </p>
+
+        <div class="happy">
+            HAPPY BIRTHDAY,
+        </div>
+
+        <div class="happy">
+            JOE 🎂
+        </div>
+
+        <div class="welcome22">
+            WELCOME TO 22.
+        </div>
+
+        <p class="final-line" style="margin-top:30px;">
+            Your island. Your year. Your story.
+        </p>
+
+        <div class="date">
+            05 • 10 • 2026
+        </div>
+
+        <p class="final-note">
+            Arsulum is yours. Don't lose the deed. 🏝️
+        </p>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =========================
+   SCREEN NAVIGATION
+========================= */
+
+function showScreen(id) {
+
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+/* =========================
+   WISH DATA
+========================= */
+
+const wishes = [
+
+    {
+        title: "LILY GARDEN",
+        image: "lily-garden.jpg",
+        text:
+        "I wish you beautiful little moments you don't have to plan for — the kind that make an ordinary day unexpectedly good."
+    },
+
+    {
+        title: "ARSULUM FOOD MARKET",
+        image: "food-market.jpg",
+        text:
+        "I wish you endless meals worth travelling for, new foods to obsess over, and enough money to order whatever you want without checking the price first. 😂"
+    },
+
+    {
+        title: "TRAVEL BUREAU",
+        image: "travel-bureau.jpg",
+        text:
+        "I wish you a passport full of stamps, places you've only dreamed about, and stories that start with: \"Remember when we went...\""
+    },
+
+    {
+        title: "RECORD SHOP",
+        image: "record-shop.jpg",
+        text:
+        "I wish you always have something worth dancing to, singing badly to, or replaying when nobody is around. 😂"
+    },
+
+    {
+        title: "ARSULUM POST OFFICE",
+        image: "post-office.jpg",
+        text:
+        "I wish the future surprises you in the best possible ways — and gives you things you didn't even know you were waiting for."
+    },
+
+    {
+        title: "MAP ROOM",
+        image: "map-room.jpg",
+        text:
+        "I wish you never feel like you have to have everything figured out. May you always have somewhere new to go, something new to learn, and a reason to keep moving."
+    },
+
+    {
+        title: "JOE'S SECRET BEACH",
+        image: "secret-beach.jpg",
+        text:
+        "I wish you days when nobody needs anything from you and you can simply exist, breathe, eat something good, and enjoy your life."
+    },
+
+    {
+        title: "ARSULUM LIGHTHOUSE",
+        image: "arsulum-lighthouse.jpg",
+        text:
+        "I wish that whenever life gets confusing, you always find your way back to yourself."
+    },
+
+    {
+        title: "TREASURE SHOP",
+        image: "treasure-shop.jpg",
+        text:
+        "I wish you have enough money someday to buy every ridiculous thing you've ever said, \"I'd buy this if I were rich,\" about. 😂"
+    },
+
+    {
+        title: "THE HEART OF ARSULUM",
+        image: "arsulum-arrival.jpg",
+        text:
+        "I wish this next chapter becomes one you'll look back on and think, \"Yeah... that was a really good year.\" I hope you make the most of every moment, collect memories you'll remember for years, and have the best graduation year to remember. May this chapter be yours. 🎓🏝️"
+    }
+
+];
+
+
+/* =========================
+   WISH SYSTEM
+========================= */
+
+let completed = [];
+
+function openWish(index) {
+
+    const wish = wishes[index];
+
+    document.getElementById("wishImage").src = wish.image;
+    document.getElementById("wishTitle").textContent = wish.title;
+    document.getElementById("wishText").textContent = wish.text;
+
+    if (!completed.includes(index)) {
+
+        completed.push(index);
+
+        document.getElementById("btn" + index)
+            .classList.add("completed");
+
+        document.getElementById("btn" + index)
+            .textContent += " ✓";
+
+        document.getElementById("count")
+            .textContent = completed.length;
+    }
+
+    showScreen("wish");
+}
+
+
+function returnToLocations() {
+
+    if (completed.length === 10) {
+
+        setTimeout(() => {
+            showScreen("cinema");
+        }, 150);
+
+    } else {
+
+        showScreen("locations");
+    }
+}
+
+
+/* =========================
+   VIDEO
+========================= */
+
+const video = document.getElementById("birthdayVideo");
+
+video.addEventListener("ended", function() {
+
+    setTimeout(() => {
+        showScreen("final");
+    }, 1200);
+
+});
+
+
+function startVideo() {
+
+    video.currentTime = 0;
+
+    video.play().catch(() => {
+        // Browser may require the user to press play.
+    });
+}
+
+</script>
+
+</body>
+</html>
